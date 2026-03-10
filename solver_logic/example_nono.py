@@ -1,0 +1,31 @@
+from dataclasses import dataclass
+
+@dataclass
+class NonoData:
+    name: str
+    rows: list
+    cols: list
+
+DUCK = NonoData("Duck", 
+                rows = [
+                    [3],
+                    [2,1],
+                    [3,2],
+                    [2,2],
+                    [6],
+                    [1,5],
+                    [6],
+                    [1],
+                    [2]
+                ],
+                cols= [
+                    [1,2],
+                    [3,1],
+                    [1,5],
+                    [7,1],
+                    [5],
+                    [3],
+                    [4],
+                    [3]
+                ]
+                )

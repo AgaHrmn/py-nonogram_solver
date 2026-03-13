@@ -17,13 +17,17 @@ class NonoPuzzle:
             grid.append(row)         
         return grid
     
-    def leftmost_position(self, clue, row):
+    def leftmost_position(self):
         # calculate needed space for the clue - [3,2] - (3*1 + 0) + (2*1) 
         # fill rest of the row with None
 
-        # refactor to find the leftmost valid arrangement that is consistent with the existing row state !!! Skip cells already set to 0, Respect cells already set to 1
+        # refactor to find the leftmost valid arrangement that is 
+        # consistent with the existing row state !!! 
+        # Skip cells already set to 0, Respect cells already set to 1
         
-        # row = []
+        row = [0,0,1,0,0,0,0,0,0,0]
+        clue = [3,2]
+
         space_needed = 0
         index = 0
 
@@ -75,22 +79,36 @@ class NonoPuzzle:
                     overlap[i] = None # unknown
         return overlap
     
-    def get_columns(self):
-        # grid = [
-        #     [1,2,3,4],
-        #     [5,6,7,8],
-        #     [9,10,11,12]
-        # ]
+    def can_place(row, start, size):
+        # returns True if a group of `size` can be placed at position `start`
+        # row = [None, None, None, None, None, None, None, None, None, None]
+        # row = [None, None, 0, None, None, None, None, None, None, None]
+        # row = [None, None, None, 1, None, None, None, None, None, None]
 
-        columns = []
-        i=0
+        # start = 0
+        # size = 3
         
-        while i < len(self.grid[0]): # len(grid[0]) - row length
+        if start + size > len(row): #end of row
+            print("end of row")
+            return False
+        if start + size < len(row) and row[start+size] not in (None,0):  #no touching the next group
+            print("is touching the next group")
+            return False
+        for cell in row[start:(start + size)]:
+            if cell == 0:
+                print(f"0's in the way")
+                return False
+        return True
+                                
+    
+    def get_columns(self):
+        columns = []
+        
+        for i in range(len(self.grid[0])): # len(grid[0]) - row length
             temp = []
             for row in self.grid:
                 temp.append(row[i])
             columns.append(temp)
-            i+=1
 
         return columns
 
@@ -102,14 +120,15 @@ class NonoPuzzle:
 # left = test.leftmost_position(DUCK.rows[4], len(DUCK.cols))
 # right = test.rightmost_position(DUCK.rows[4], len(DUCK.cols))
 
-rows = [[3,2],[1],[2,4]]
-cols = [[3,1],[4],[4,2],[7]]
+rows = [[1],[1,1],[1]]
+cols = [[1],[1,1],[1]]
 
 test = NonoPuzzle(rows,cols)
+print(f"grid: {test.grid}")
+
 # left = test.leftmost_position(rows[0], 10)
 # right = test.rightmost_position(rows[0], 10)
 
 # print(f"left: {left}\nright: {right}")
 # print(f"overlap: {test.find_overlap(left, right)}")
-print(f"grid: {test.grid}")
-print(f"get columns result: {test.get_columns()}")
+# print(f"get columns result: {test.get_columns()}")

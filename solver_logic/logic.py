@@ -17,48 +17,45 @@ class NonoPuzzle:
             grid.append(row)         
         return grid
     
-    def leftmost_position(self):
+    def leftmost_position(self, row, clue):
         # calculate needed space for the clue - [3,2] - (3*1 + 0) + (2*1) 
-        # fill rest of the row with None
 
         # refactor to find the leftmost valid arrangement that is 
-        # consistent with the existing row state !!! 
+        # consistent with the existing row state 
         # Skip cells already set to 0, Respect cells already set to 1
         
-        row = [0,0,1,0,0,0,0,0,0,0]
-        clue = [3,2]
+        # row = [None, None, None, None, None, None, None, None, None, None]
+        # row = [None, None, 0, None, None, None, None, None, None, None]
+        # row = [None, None, None, None, 1, None, None, None, None, None]        
+        # clue = [3,2]
 
-        space_needed = 0
-        index = 0
+        current_position = 0 
+        for i, group in enumerate(clue):
+            print(f"current position: {current_position}")
+            while not self.can_place(row, current_position, group):
+                current_position += 1
+                if current_position > len(row):
+                    raise ValueError("No valid placement found")
+                
+            for j in range(group):
+                row[current_position + j] = 1
+            
+            current_position += group
+            if i != len(clue) - 1:
+                row[current_position] = 0
 
-        # for _ in range(length):
-        #     row.append(None)
-
-        for i, c in enumerate(clue): 
-            space_needed += c
-
-            while index <= space_needed:
-                if index == space_needed:
-                    if i != len(clue) - 1: #skipping last 0 - in case clue fills whole row 
-                        #print(f"inserting 0 at index {index}")
-                        row[index] = 0
-                else: 
-                    row[index] = 1
-                index += 1
-            space_needed += 1
-        
-        for i, c in enumerate(row): #filling tailing cells with 0
-            if c == None:
-                row[i] = 0    
-
+        for i, cell in enumerate(row):
+            if cell == None:
+                row[i] = 0
+            
         return row
 
-    def rightmost_position(self, clue, row):
+    def rightmost_position(self, row, clue):
         # reverse clue [3,2] -> [2,3] 
         # leftmost of reversed clue 1110110000
         # reverse result 0000110111
         reversed_clue = clue[::-1] # not altering the clue 
-        temp_row = self.leftmost_position(reversed_clue, row)
+        temp_row = self.leftmost_position(row, reversed_clue)
         reversed_row = temp_row[::-1]
  
         return reversed_row
@@ -79,28 +76,27 @@ class NonoPuzzle:
                     overlap[i] = None # unknown
         return overlap
     
-    def can_place(row, start, size):
+    def can_place(self, row, start, size):
         # returns True if a group of `size` can be placed at position `start`
+
         # row = [None, None, None, None, None, None, None, None, None, None]
         # row = [None, None, 0, None, None, None, None, None, None, None]
         # row = [None, None, None, 1, None, None, None, None, None, None]
-
         # start = 0
         # size = 3
         
         if start + size > len(row): #end of row
-            print("end of row")
+            # print("end of row")
             return False
         if start + size < len(row) and row[start+size] not in (None,0):  #no touching the next group
-            print("is touching the next group")
+            # print("is touching the next group")
             return False
         for cell in row[start:(start + size)]:
             if cell == 0:
-                print(f"0's in the way")
+                # print(f"0's in the way")
                 return False
         return True
-                                
-    
+                                 
     def get_columns(self):
         columns = []
         
@@ -117,18 +113,16 @@ class NonoPuzzle:
     
 
 # test = NonoPuzzle(DUCK.rows,DUCK.cols)
-# left = test.leftmost_position(DUCK.rows[4], len(DUCK.cols))
-# right = test.rightmost_position(DUCK.rows[4], len(DUCK.cols))
+# left = test.leftmost_position(test.grid[4], DUCK.rows[4])
+# right = test.rightmost_position(test.grid[4], DUCK.rows[4])
 
 rows = [[1],[1,1],[1]]
 cols = [[1],[1,1],[1]]
 
 test = NonoPuzzle(rows,cols)
-print(f"grid: {test.grid}")
+left = test.leftmost_position(test.grid[1], rows[1])
+right = test.rightmost_position(test.grid[1], rows[1])
 
-# left = test.leftmost_position(rows[0], 10)
-# right = test.rightmost_position(rows[0], 10)
-
-# print(f"left: {left}\nright: {right}")
-# print(f"overlap: {test.find_overlap(left, right)}")
+print(f"left: {left}\nright: {right}")
+print(f"overlap: {test.find_overlap(left, right)}")
 # print(f"get columns result: {test.get_columns()}")

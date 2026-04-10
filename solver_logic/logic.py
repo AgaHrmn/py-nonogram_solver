@@ -39,26 +39,43 @@ class NonoPuzzle:
 
         initial_row_state = [x for x in row]
         current_position = 0 
+        indexes = []
+        space_needed = 0
         
         print(f"initial_row_state: {initial_row_state}")
 
-        for i, group in enumerate(clue):
+        for j in range(current_position, len(row)):
+                    if initial_row_state[j] == 1:
+                        if j not in indexes:
+                            indexes.append(j)
+        print(indexes)
+
+        for group in clue:
+            space_needed += group + 1
+        space_needed -= 1
+
+        print(space_needed)
+        if len(row[indexes[0]:]) >= space_needed:
+            print(f"len(row[indexes[0]:]) <= space_needed : {len(row[indexes[0]:])} < {space_needed}")
+            current_position = indexes[0]
+        else: 
+            print(f"leftmost possible start: {indexes[-1]-space_needed + 1}")
+            current_position = indexes[-1]-space_needed + 1
+
+######################################################
+        for i, group in enumerate(clue): 
             
             while not self.can_place(row, current_position, group):
                 current_position += 1  
                 if current_position > len(row):
                     raise ValueError("No valid placement found")
                 
-            for j in range(group):
-                row[current_position + j] = 1
+            for k in range(group):
+                row[current_position + k] = 1
             
             current_position += group
             if i != len(clue) - 1:
                 row[current_position] = 0
-            
-            for k in range(current_position, len(row)):
-                    if row[k] == 1:
-                        print(f"Found uncovered 1 at index {k}")
 
         for l, cell in enumerate(row):
             if cell == None:
@@ -120,7 +137,7 @@ test = NonoPuzzle(rows,cols)
 # print(test.has_uncovered_ones([None, None, None, None, None, None, None, 1, 1, None], 1,3))
 
 # left = test.leftmost_position([None, None, None, 1, None, None, None, 1, None, None], [3,2]) # works
-left = test.leftmost_position([None, None, None, 1, None, 1, None, 1, None, None], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
+left = test.leftmost_position([None, None, None, None, None, None, None, 1, None, None], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
 
 # right = test.rightmost_position([None, None, None, 1, None, None, None, None, 1, None], [3,2])
 

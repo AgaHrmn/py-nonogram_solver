@@ -54,14 +54,15 @@ class NonoPuzzle:
             space_needed += group + 1
         space_needed -= 1
 
-        print(space_needed)
+        # print(space_needed)
         if len(row[indexes[0]:]) >= space_needed:
-            print(f"len(row[indexes[0]:]) <= space_needed : {len(row[indexes[0]:])} < {space_needed}")
+            # print(f"len(row[indexes[0]:]) >= space_needed : {len(row[indexes[0]:])} < {space_needed}")
             current_position = indexes[0]
         else: 
-            print(f"leftmost possible start: {indexes[-1]-space_needed + 1}")
+            # print(f"leftmost possible start: {indexes[-1]-space_needed + 1}")
             current_position = indexes[-1]-space_needed + 1
 
+        # print(indexes)
 ######################################################
         for i, group in enumerate(clue): 
             
@@ -70,6 +71,10 @@ class NonoPuzzle:
                 if current_position > len(row):
                     raise ValueError("No valid placement found")
                 
+            for j in range(current_position, len(row)):
+                if row[j] == 1: 
+                    print(f"found uncovered 1 at index {j}")
+
             for k in range(group):
                 row[current_position + k] = 1
             
@@ -137,7 +142,7 @@ test = NonoPuzzle(rows,cols)
 # print(test.has_uncovered_ones([None, None, None, None, None, None, None, 1, 1, None], 1,3))
 
 # left = test.leftmost_position([None, None, None, 1, None, None, None, 1, None, None], [3,2]) # works
-left = test.leftmost_position([None, None, None, None, None, None, None, 1, None, None], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
+left = test.leftmost_position([1, None, None, None, None, None, None, None, None, 1], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
 
 # right = test.rightmost_position([None, None, None, 1, None, None, None, None, 1, None], [3,2])
 

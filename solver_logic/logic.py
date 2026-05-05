@@ -41,14 +41,17 @@ class NonoPuzzle:
         current_position = 0 
         indexes = []
         space_needed = 0
+        # gap = 0
         
         print(f"initial_row_state: {initial_row_state}")
 
         for j in range(current_position, len(row)):
-                    if initial_row_state[j] == 1:
-                        if j not in indexes:
-                            indexes.append(j)
+            if initial_row_state[j] == 1:
+                if j not in indexes:
+                    indexes.append(j)
+
         print(indexes)
+        print(clue)
 
         for group in clue:
             space_needed += group + 1
@@ -56,6 +59,18 @@ class NonoPuzzle:
 
         # print(space_needed)
         if indexes:
+            
+            # find gap between indexes 
+            # for a, cell in enumerate(initial_row_state):
+            #     if cell == 1:
+            #         # print(f"found 1 at index {a}")
+            #         continue
+            #     if a <= indexes[-1]:
+            #         # print(f"adding 1 to gap, current index = {a}")
+            #         gap +=1
+            # print(f"gap={gap}")
+
+
             if len(row[indexes[0]:]) >= space_needed:
                 # print(f"len(row[indexes[0]:]) >= space_needed : {len(row[indexes[0]:])} < {space_needed}")
                 current_position = indexes[0]
@@ -66,8 +81,24 @@ class NonoPuzzle:
         # print(indexes)
 ######################################################
         for i, group in enumerate(clue): 
+            gap = 0
             
             while not self.can_place(row, current_position, group):
+                if len(indexes) > 1:
+                # find gap between indexes and chceck if its bigger than the group, if so shift current position 
+                    for a, cell in enumerate(row):
+                        if cell in [1,0]:
+                            # print(f"found 1 at index {a}")
+                            continue
+                        if a <= indexes[-1]:
+                            # print(f"adding 1 to gap, current index = {a}")
+                            gap +=1
+                print(f"row = {row}")
+                print(f"gap={gap}")
+
+                if gap >= group:
+                    current_position = indexes[-1] - group
+
                 current_position += 1  
                 if current_position > len(row):
                     raise ValueError("No valid placement found")
@@ -75,6 +106,7 @@ class NonoPuzzle:
             for j in range(current_position, len(row)):
                 if row[j] == 1: 
                     print(f"found uncovered 1 at index {j}")
+                    
 
             for k in range(group):
                 row[current_position + k] = 1
@@ -142,7 +174,7 @@ cols = [[1],[1,1],[1]]
 test = NonoPuzzle(rows,cols)
 # print(test.has_uncovered_ones([None, None, None, None, None, None, None, 1, 1, None], 1,3))
 
-left = test.leftmost_position([None, None, None, None, None, None, None, None, None, None], [3,2]) # works
+left = test.leftmost_position([None, 1, None, None, None, None, None, None, 1, None], [3,2]) # works
 # left = test.leftmost_position([1, None, None, None, None, None, None, None, None, 1], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
 
 # right = test.rightmost_position([None, None, None, 1, None, None, None, None, 1, None], [3,2])

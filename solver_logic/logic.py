@@ -34,14 +34,11 @@ class NonoPuzzle:
         return True
     
     def leftmost_position(self, row, clue):
-        # refactor to find the leftmost valid arrangement that is 
         # consistent with the existing row state 
 
         initial_row_state = [x for x in row]
         current_position = 0 
         indexes = []
-        space_needed = 0
-        # gap = 0
         
         print(f"initial_row_state: {initial_row_state}")
 
@@ -50,36 +47,6 @@ class NonoPuzzle:
                 if j not in indexes:
                     indexes.append(j)
 
-        print(indexes)
-        print(clue)
-
-        for group in clue:
-            space_needed += group + 1
-        space_needed -= 1
-
-        # print(space_needed)
-        if indexes:
-            
-            # find gap between indexes 
-            # for a, cell in enumerate(initial_row_state):
-            #     if cell == 1:
-            #         # print(f"found 1 at index {a}")
-            #         continue
-            #     if a <= indexes[-1]:
-            #         # print(f"adding 1 to gap, current index = {a}")
-            #         gap +=1
-            # print(f"gap={gap}")
-
-
-            if len(row[indexes[0]:]) >= space_needed:
-                # print(f"len(row[indexes[0]:]) >= space_needed : {len(row[indexes[0]:])} < {space_needed}")
-                current_position = indexes[0]
-            else: 
-                # print(f"leftmost possible start: {indexes[-1]-space_needed + 1}")
-                current_position = indexes[-1]-space_needed + 1
-
-        # print(indexes)
-######################################################
         for i, group in enumerate(clue): 
             gap = 0
             
@@ -93,20 +60,16 @@ class NonoPuzzle:
                         if a <= indexes[-1]:
                             # print(f"adding 1 to gap, current index = {a}")
                             gap +=1
-                print(f"row = {row}")
-                print(f"gap={gap}")
+                # print(f"row = {row}")
+                # print(f"gap = {gap}")
+                # print(f"current pos = {current_position}")
 
-                if gap >= group:
+                if i == len(clue) - 1 and gap >= group:
                     current_position = indexes[-1] - group
 
                 current_position += 1  
                 if current_position > len(row):
                     raise ValueError("No valid placement found")
-                
-            for j in range(current_position, len(row)):
-                if row[j] == 1: 
-                    print(f"found uncovered 1 at index {j}")
-                    
 
             for k in range(group):
                 row[current_position + k] = 1
@@ -174,12 +137,13 @@ cols = [[1],[1,1],[1]]
 test = NonoPuzzle(rows,cols)
 # print(test.has_uncovered_ones([None, None, None, None, None, None, None, 1, 1, None], 1,3))
 
-left = test.leftmost_position([None, 1, None, None, None, None, None, None, 1, None], [3,2]) # works
-# left = test.leftmost_position([1, None, None, None, None, None, None, None, None, 1], [3,2]) # doesn't work - not considering gap between group of 3 as part of group
+# left = test.leftmost_position([None, 1, None, None, None, None, None, None, None, 1], [2,2]) # works
+# left = test.leftmost_position([1, 1, None, None, 1, None, None, 1, None, 1], [3,1,3]) # works
 
-# right = test.rightmost_position([None, None, None, 1, None, None, None, None, 1, None], [3,2])
+left = test.leftmost_position([None, None, 1, 1, None, None, None, None, 1, None], [3,2,2])
+right = test.rightmost_position([None, None, 1, 1, None, None, None, None, 1, None], [3,2,2])
 
 # print(f"row: [None, None, None, 1, None, None, None, None, 1, None]")
-print(left)
-# print(f"left: {left}\nright: {right}")
-# print(f"overlap: {test.find_overlap(left, right)}")
+# print(left)
+print(f"left: {left}\nright: {right}")
+print(f"overlap: {test.find_overlap(left, right)}")
